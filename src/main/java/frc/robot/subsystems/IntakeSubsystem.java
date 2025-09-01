@@ -4,11 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Constants.SolenoidIDs;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -21,38 +21,38 @@ public class IntakeSubsystem extends SubsystemBase {
         return INSTANCE;
     }
 
-    // private final DoubleSolenoid armSolenoid;
-    private TalonSRX intakeMotor;
+    private final DoubleSolenoid armSolenoid;
+    private final TalonSRX intakeMotor;
     private boolean isArmOut;
     private boolean intakeRunning;
 
     public IntakeSubsystem() {
-        // armSolenoid = new DoubleSolenoid(
-        //     Constants.SolenoidIDs.COMPRESSOR_MODULE_ID, 
-        //     PneumaticsModuleType.REVPH,
-        //     SolenoidIDs.INTAKE_IN, 
-        //     SolenoidIDs.INTAKE_OUT
-        // );
+        armSolenoid = new DoubleSolenoid(
+            Constants.SolenoidIDs.COMPRESSOR_MODULE_ID, 
+            PneumaticsModuleType.REVPH,
+            SolenoidIDs.INTAKE_IN, 
+            SolenoidIDs.INTAKE_OUT
+        );
 
         intakeMotor = new TalonSRX(Constants.MotorIDs.INTAKE_MOTOR);
-        // isArmOut = armSolenoid.get() == Value.kReverse;
+        isArmOut = armSolenoid.get() == Value.kReverse;
     }
 
-    // public void armIn(){
-    //     armSolenoid.set(Value.kReverse);
-    //     isArmOut = false;
-    // }
+    public void armIn(){
+        armSolenoid.set(Value.kReverse);
+        isArmOut = false;
+    }
   
-    // public void armOut(){
-    //     armSolenoid.set(Value.kForward);
-    //     isArmOut = true;
-    // }
+    public void armOut(){
+        armSolenoid.set(Value.kForward);
+        isArmOut = true;
+    }
 
     public boolean isArmOut() {
         return isArmOut;
     }
 
-    public void run(){
+    public void runIntake(){
         intakeMotor.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED_PCT);
         intakeRunning = true;
     }
@@ -68,7 +68,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() { // TODO: ADV SCOPE? Shuffleboard?
+    public void periodic() {
         SmartDashboard.putBoolean("Intake Arm Out", isArmOut);
         SmartDashboard.putBoolean("Intake Running", intakeRunning);
     }

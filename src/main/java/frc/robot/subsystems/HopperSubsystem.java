@@ -21,7 +21,7 @@ public class HopperSubsystem extends SubsystemBase {
     return INSTANCE;
   }
 
-    private TalonSRX hopperMotor;
+    private final TalonSRX hopperMotor;
 
     public HopperSubsystem() {
         hopperMotor = new TalonSRX(MotorIDs.HOPPER_MOTOR);

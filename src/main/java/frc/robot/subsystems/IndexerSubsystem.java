@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -43,36 +42,38 @@ public class IndexerSubsystem extends SubsystemBase {
     feederIndexerMotor.setNeutralMode(NeutralMode.Brake);
   }
 
+  // PRELOAD METHODS
   public void runPreload() {
-    //   /System.err.println("Running Preload");
     preloadIndexerMotor.set(ControlMode.PercentOutput, Constants.Shooter.PRELOAD_WHEEL_SPEED);
   }
 
   public void runPreloadReverse() {
-    //System.err.println("Running Preload Reverse");
     preloadIndexerMotor.set(ControlMode.PercentOutput, -Constants.Shooter.PRELOAD_WHEEL_SPEED);
   }
 
+  public void stopPreload() {
+    preloadIndexerMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  // FEEDER METHODS
   public void runFeeder() {
-    //System.err.println("Running Feeder");
     feederIndexerMotor.set(ControlMode.PercentOutput, -Constants.Shooter.INDEXER_WHEEL_SPEED);
   }
 
   public void runFeederReverse() {
-    //System.err.println("Running Feeder Reverse");
     feederIndexerMotor.set(ControlMode.PercentOutput, Constants.Shooter.INDEXER_WHEEL_SPEED);
   }
 
-  public void stopPreload() {
-    //System.err.println("Stopping Preload");
-    preloadIndexerMotor.set(ControlMode.PercentOutput, 0);
-  }
-
   public void stopFeeder() {
-    //System.err.println("Running Stopping Feeder");
     feederIndexerMotor.set(ControlMode.PercentOutput, 0);
   }
 
+  public void stopAll(){
+    feederIndexerMotor.set(ControlMode.PercentOutput, 0);
+    preloadIndexerMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  // GETTERS
   public double getLargeIndexerSpeed() {
     double largeIndexerRunning = preloadIndexerMotor.getSelectedSensorVelocity();
     return largeIndexerRunning;
@@ -83,6 +84,7 @@ public class IndexerSubsystem extends SubsystemBase {
     return feederIndexerRunning;
   }
 
+  // TODO: double check directions
   public boolean getCargoPreStagedDetected() {
     //returns true if beam is not broken, no ball
     return !preStagedCargoDetector.get();
@@ -94,12 +96,10 @@ public class IndexerSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() { // TODO: ADV Scope or Shuffleboard
+  public void periodic() { 
     boolean stagedDetected = getCargoStagedDetected();
     boolean preStagedDetected = getCargoPreStagedDetected();
 
-    // SmartDashboard.putNumber("Feeder Indexer Speed", getFeederIndexerSpeed());
-    // SmartDashboard.putNumber("Large Indexer Speed", getLargeIndexerSpeed());
     SmartDashboard.putBoolean("Staged Cargo Detected", stagedDetected);
     SmartDashboard.putBoolean("PreStaged Cargo Detected", preStagedDetected);
   }

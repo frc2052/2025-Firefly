@@ -5,9 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -31,21 +29,20 @@ public class ShooterSubsystem extends SubsystemBase {
   private final TalonSRX topMotor;
   private final TalonSRX bottomMotor;
 
-  private final DoubleSolenoid angleChangeSolenoid;
+  private final DoubleSolenoid angleSolenoid;
 
   private double topWheelTargetVelocity;
   private double bottomWheelTargetVelocity;
   private double shooterVelocityBoost;
   private FiringAngle currentAngle;
   private boolean shootAngle1Override;
-  private boolean idleSpeedEnabled;
 
   public ShooterSubsystem() {
+
   // top motor
     topMotor = new TalonSRX(MotorIDs.TOP_SHOOTER_MOTOR);
     topMotor.configFactoryDefault();
     topMotor.setNeutralMode(NeutralMode.Coast);
-    // topMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 0, 10); // TODO: is this the correct type?
     // pid
     topMotor.config_kP(0, 0.11, 10);
     topMotor.config_kI(0, 0.001, 10); 
@@ -55,22 +52,20 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomMotor = new TalonSRX(MotorIDs.BOTTOM_SHOOTER_MOTOR);
     bottomMotor.configFactoryDefault();
     bottomMotor.setNeutralMode(NeutralMode.Coast);
-    // bottomMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 0, 10); // TODO: is this the correct type?
     // pid
     bottomMotor.config_kP(0, 0.11, 10);
     bottomMotor.config_kI(0, 0.001, 10);
     bottomMotor.config_kD(0, 0.7, 10);
 
-    angleChangeSolenoid = new DoubleSolenoid(
+    angleSolenoid = new DoubleSolenoid(
       Constants.SolenoidIDs.COMPRESSOR_MODULE_ID,
       PneumaticsModuleType.REVPH,
       Constants.SolenoidIDs.SHOOTER_IN,
       Constants.SolenoidIDs.SHOOTER_OUT
     );
 
-    currentAngle = angleChangeSolenoid.get() == Value.kReverse ? FiringAngle.ANGLE_2 : FiringAngle.ANGLE_1;
+    currentAngle = angleSolenoid.get() == Value.kReverse ? FiringAngle.ANGLE_2 : FiringAngle.ANGLE_1;
 
-    idleSpeedEnabled = false;
     stop();
   }
 
@@ -118,14 +113,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void stop() {
     System.err.println("***************************** STOPPING SHOOTER");
-    if (idleSpeedEnabled) { 
-      runAtSpeed(7400, 7400);
-    } else {
       topWheelTargetVelocity = 0;
       bottomWheelTargetVelocity = 0;
       topMotor.set(ControlMode.PercentOutput, 0);
       bottomMotor.set(ControlMode.PercentOutput, 0);
-    }
   }
 
   public void shootAtPercentage(double topWheelPercent, double bottomWheelPercent) {
@@ -135,30 +126,16 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomMotor.set(ControlMode.PercentOutput, bottomWheelPercent/100.0);
   }
 
-  public void setIdleSpeedEnabled(boolean enabled) {
-    idleSpeedEnabled = enabled;
-    SmartDashboard.putBoolean("Disable Shooter Idle", !enabled);
-  }
-
-  // public void setShooterVelocityBoost(double boostPct) {
-  //   if (boostPct < -0.1) {
-  //     boostPct = -0.1;
-  //   } else if (boostPct > 0.1) {
-  //     boostPct = 0.1;
-  //   }
-  //   shooterVelocityBoost = boostPct;
-  // }
-
   public void setShootAngle1() {
     if (!shootAngle1Override) {
-      angleChangeSolenoid.set(Value.kReverse);
+      angleSolenoid.set(Value.kReverse);
       currentAngle = FiringAngle.ANGLE_1;
     }
   }
 
   public void setShootAngle2() {
     if (!shootAngle1Override) {
-      angleChangeSolenoid.set(Value.kForward);
+      angleSolenoid.set(Value.kForward);
       currentAngle = FiringAngle.ANGLE_2;
     }
   }
