@@ -84,7 +84,7 @@ public class IndexerSubsystem extends SubsystemBase {
     return feederIndexerRunning;
   }
 
-  // TODO: double check directions
+  // TODO: double check accuracy
   public boolean getCargoPreStagedDetected() {
     //returns true if beam is not broken, no ball
     return !preStagedCargoDetector.get();

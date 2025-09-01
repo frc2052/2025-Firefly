@@ -31,9 +31,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final DoubleSolenoid angleSolenoid;
 
-  private double topWheelTargetVelocity;
-  private double bottomWheelTargetVelocity;
-  private double shooterVelocityBoost;
   private FiringAngle currentAngle;
   private boolean shootAngle1Override;
 
@@ -69,52 +66,8 @@ public class ShooterSubsystem extends SubsystemBase {
     stop();
   }
 
-  public void runAtSpeed(double topVelocityTicksPerSeconds, double bottomVelocityTicksPerSeconds) {
-    topWheelTargetVelocity = topVelocityTicksPerSeconds * (shooterVelocityBoost + 1);
-    bottomWheelTargetVelocity = bottomVelocityTicksPerSeconds * (shooterVelocityBoost + 1);
-
-    topMotor.set(ControlMode.Velocity, topWheelTargetVelocity);// * Constants.Shooter.SHOOTER_TOP_PULLDOWN_PCT);
-    bottomMotor.set(ControlMode.Velocity, bottomWheelTargetVelocity);// * Constants.Shooter.SHOOTER_BOTTOM_PULLDOWN_PCT);
-  }
-
-  // public void runAtShootSpeed(double topVelocityTicksPerSeconds, double bottomVelocityTicksPerSeconds) {
-  //   setTopWheelVelocity(topVelocityTicksPerSeconds);
-  //   setBottomWheelVelocity(bottomVelocityTicksPerSeconds);
-  //   runAtShootSpeed();
-  // }
-
-  public boolean isAtSpeed() {
-    // consider the shooter on target if we are within a shooter tolerance of target speeds
-    if (topWheelTargetVelocity != 0 && bottomWheelTargetVelocity != 0) { // To make sure indexing doesn't move balls into shooter because we're in fact at target speed 0
-      boolean topIsOnTarget = topMotor.getSelectedSensorVelocity() > topWheelTargetVelocity * (1 - Constants.Shooter.SHOOTER_TOLERANCE)
-          && topMotor.getSelectedSensorVelocity() < topWheelTargetVelocity * (1 + Constants.Shooter.SHOOTER_TOLERANCE);
-
-      boolean bottomIsOnTarget = bottomMotor.getSelectedSensorVelocity() > bottomWheelTargetVelocity * (1 - Constants.Shooter.SHOOTER_TOLERANCE)
-          && bottomMotor.getSelectedSensorVelocity() < bottomWheelTargetVelocity * (1 + Constants.Shooter.SHOOTER_TOLERANCE);
-
-      return topIsOnTarget && bottomIsOnTarget;
-    } else {
-      return false;
-    }
-  }
-
-  // public void setTopWheelVelocity(double velocity) {
-  //   topWheelVelocity = velocity;
-  // }
-
-  // public void setBottomWheelVelocity(double velocity) {
-  //   bottomWheelVelocity = velocity;
-  // }
-
-  // public void setBothWheelVelocities(double velocity) {
-  //   topWheelVelocity = velocity;
-  //   bottomWheelVelocity = velocity;
-  // }
-
   public void stop() {
     System.err.println("***************************** STOPPING SHOOTER");
-      topWheelTargetVelocity = 0;
-      bottomWheelTargetVelocity = 0;
       topMotor.set(ControlMode.PercentOutput, 0);
       bottomMotor.set(ControlMode.PercentOutput, 0);
   }
@@ -127,21 +80,13 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShootAngle1() {
-    if (!shootAngle1Override) {
       angleSolenoid.set(Value.kReverse);
       currentAngle = FiringAngle.ANGLE_1;
-    }
   }
 
   public void setShootAngle2() {
-    if (!shootAngle1Override) {
       angleSolenoid.set(Value.kForward);
       currentAngle = FiringAngle.ANGLE_2;
-    }
-  }
-
-  public void setShootAngle1Override(boolean override) {
-    shootAngle1Override = override;
   }
 
   // ------------ GETTERS ---------- //
@@ -162,19 +107,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return bottomMotor.getSelectedSensorVelocity();
   }
 
-  public double getTargetTopWheelVelocity() {
-      return topWheelTargetVelocity;
-  }
-
-  public double getTargetBottomWheelVelocity() {
-    return bottomWheelTargetVelocity;
-  }
-
   @Override
-  public void periodic() { // TODO: Adv Scope or Shuffleboard
-    SmartDashboard.putBoolean("Shooter Wheels At Speed?", isAtSpeed());
-    SmartDashboard.putNumber("Shooter Target Top Wheel Speed", topWheelTargetVelocity);
-    SmartDashboard.putNumber("Shooter Target Bottom Wheel Speed", bottomWheelTargetVelocity);
+  public void periodic() {
     SmartDashboard.putNumber("Shooter Top Wheel Speed", topMotor.getSelectedSensorVelocity());
     SmartDashboard.putNumber("Shooter Bottom Wheel Speed", bottomMotor.getSelectedSensorVelocity());
   }

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -9,11 +5,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShootCommandFactory;
-import frc.robot.commands.ShootCommandFactory.ShootMode;
 import frc.robot.commands.intake.BasicIntakeCommand;
 import frc.robot.commands.intake.IntakeArmToggleCommand;
 import frc.robot.commands.intake.OuttakeCommand;
+import frc.robot.commands.shooter.BasicThrottleShootCommand;
+import frc.robot.commands.shooter.FullShootCommand;
+import frc.robot.commands.shooter.IndexCommand;
+import frc.robot.commands.shooter.IndexOutCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.FiringAngle;
@@ -23,7 +21,6 @@ public class RobotContainer {
   Joystick joystick = new Joystick(1);
 
   Drivetrain drivetrain = Drivetrain.getInstance();
-  RobotState robotPose = RobotState.getInstance();
   ShooterSubsystem shooter = ShooterSubsystem.getInstance();
  
 
@@ -46,11 +43,10 @@ public class RobotContainer {
   JoystickButton indexButton;
   JoystickButton indexOutButton;
 
+  JoystickButton basicShootButton;
   JoystickButton lowShootButton;
   JoystickButton highShootButton;
 
-  JoystickButton adjustableShootButton;
-  JoystickButton basicShootCommandButton;
   JoystickButton angle1Button;
   JoystickButton angle2Button;
 
@@ -64,47 +60,15 @@ public class RobotContainer {
     intakeToggleButton = new JoystickButton(joystick, 3);
   
     // shooter buttons
+    basicShootButton = new JoystickButton(joystick, 9); // manual angle toggle
     lowShootButton = new JoystickButton(joystick, 7); 
     highShootButton = new JoystickButton(joystick, 8); 
-    adjustableShootButton = new JoystickButton(joystick, 10); 
 
     indexButton = new JoystickButton(joystick, 2);
     indexOutButton = new JoystickButton(joystick, 11);
-    
-    basicShootCommandButton = new JoystickButton(joystick, 1); 
-  
+      
     angle1Button = new JoystickButton(joystick, 7);
     angle2Button = new JoystickButton(joystick, 8);
-  
-  // ------------------------- BUTTON'S COMMANDS ------------------------- //
-    // shooter commands
-    Command lowShootCommand = ShootCommandFactory.shootPercentage(
-      ShootMode.SHOOT_ALL, 
-      Constants.Shooter.SHOOTER_TOP_PULLDOWN_PCT, 
-      Constants.Shooter.SHOOTER_BOTTOM_PULLDOWN_PCT, 
-      FiringAngle.ANGLE_1);
-    
-    Command highShootCommand = ShootCommandFactory.shootPercentage(
-      ShootMode.SHOOT_ALL, 
-      Constants.Shooter.SHOOTER_TOP_PULLDOWN_PCT, 
-      Constants.Shooter.SHOOTER_BOTTOM_PULLDOWN_PCT, 
-      FiringAngle.ANGLE_2);
-
-    Command adjustableShootCommand = 
-      ShootCommandFactory.throttleShootCommand(
-        ShootMode.SHOOT_ALL, 
-        joystick::getThrottle);
-
-    Command indexCommand = 
-      ShootCommandFactory.manualRunIndexer();
-
-    Command indexOutCommand = 
-      ShootCommandFactory.manualIndexOut();
-
-    Command basicShootCommand = // change percentage in the command per angle
-      ShootCommandFactory.basicThrottleShootCommand(() -> joystick.getThrottle());
-      // ShootCommandFactory.shootPercentage(ShootMode.SHOOT_ALL, 75, 75, FiringAngle.ANGLE_1 );
-
   // ------------------------- BUTTON BINDINGS ------------------------- //
     // intake button
       // level 1
@@ -115,13 +79,12 @@ public class RobotContainer {
     intakeToggleButton.whileTrue(new IntakeArmToggleCommand());
 
     // shooter button - need to adust throttle speeds
-    lowShootButton.whileTrue(lowShootCommand);
-    highShootButton.whileTrue(highShootCommand);
-    adjustableShootButton.whileTrue(adjustableShootCommand);
+    basicShootButton.whileTrue(new BasicThrottleShootCommand(joystick::getThrottle));
+    lowShootButton.whileTrue(new FullShootCommand(joystick::getThrottle, FiringAngle.ANGLE_1));
+    highShootButton.whileTrue(new FullShootCommand(joystick::getThrottle, FiringAngle.ANGLE_2));
 
-    indexButton.whileTrue(indexCommand);
-    indexOutButton.whileTrue(indexOutCommand);
-    basicShootCommandButton.whileTrue(basicShootCommand);
+    indexButton.whileTrue(new IndexCommand());
+    indexOutButton.whileTrue(new IndexOutCommand());
 
     angle1Button.onTrue(new InstantCommand(() -> shooter.setShootAngle1()));
     angle2Button.onTrue(new InstantCommand(() -> shooter.setShootAngle2()));
@@ -129,7 +92,6 @@ public class RobotContainer {
     zeroGyroButton.onTrue(new InstantCommand(() -> drivetrain.zeroGyro()));
   }
 
- 
   public Command getAutonomousCommand() {
     System.out.println("RAN AUTONOMOUS COMMAND - INSTANT COMMAND");
     return new InstantCommand();
