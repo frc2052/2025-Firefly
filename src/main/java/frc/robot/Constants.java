@@ -7,11 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
-  }
 
-  public static class MotorIDs { // TODO: adjust to appropriate values
+  public static class MotorIDs { 
     public static final int TOP_SHOOTER_MOTOR = 4;
     public static final int BOTTOM_SHOOTER_MOTOR = 22;
     public static final int HOPPER_MOTOR = 17; // "hz blue compliant wheels"
@@ -19,7 +16,7 @@ public final class Constants {
     public static final int FEEDER_INDEXER_MOTOR = 19; // "small blue wheel under shooter"
     public static final int INTAKE_MOTOR = 20;
   }
-
+    
   public static class SolenoidIDs {
     public static final int COMPRESSOR_MODULE_ID = 13;
 
@@ -88,7 +85,7 @@ public final class Constants {
     public static final int INDEXER_FEEDER = 8;
   }
 
-public static final class Shooter { // TODO: validate
+public static final class Shooter { 
   public static final double PRELOAD_WHEEL_SPEED = 1;
   public static final double TOP_WHEEL_SPEED = 5;
   public static final double BOTTOM_WHEEL_SPEED = 5;
@@ -97,9 +94,6 @@ public static final class Shooter { // TODO: validate
   public static final double SHOOTER_TOLERANCE = 0.01;
   public static final double SHOOTER_TOP_PULLDOWN_PCT = 0.97;
   public static final double SHOOTER_BOTTOM_PULLDOWN_PCT = 0.97;
-
-  // public static final double ANGLE_CHANGE_THRESHOLD_TY = -5.0;
-  // public static final double ANGLE_CHANGE_TOLERANCE_DEGREES = 1; //
 
   public static final double ANGLE_CHANGE_THRESHOLD_DISTANCE_INCHES = 66;
   public static final double ANGLE_CHANGE_TOLERANCE_DISTANCE_INCHES = 6;

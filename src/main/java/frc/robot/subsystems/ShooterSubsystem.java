@@ -18,6 +18,8 @@ import frc.robot.Constants.MotorIDs;
 
 public class ShooterSubsystem extends SubsystemBase {
 
+  private static IntakeSubsystem intake1 = IntakeSubsystem.getInstance();
+
   private static ShooterSubsystem INSTANCE;
     public static ShooterSubsystem getInstance(){
         if (INSTANCE == null) {
@@ -32,7 +34,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private final DoubleSolenoid angleSolenoid;
 
   private FiringAngle currentAngle;
-  private boolean shootAngle1Override;
 
   public ShooterSubsystem() {
 
