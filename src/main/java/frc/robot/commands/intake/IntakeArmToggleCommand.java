@@ -1,11 +1,8 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeArmToggleCommand extends Command {
-
-  private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
   public IntakeArmToggleCommand() {
   }
@@ -13,11 +10,7 @@ public class IntakeArmToggleCommand extends Command {
   // what runs ONCE @ the beginning
   @Override
   public void initialize() {
-    if (intake.isArmOut()) {
-        intake.armIn();
-    } else {
-      intake.armOut();
-    }
+
   }
 
   // what runs REPEATEDLY when calling the command
