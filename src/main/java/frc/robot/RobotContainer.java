@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.indexer.IndexCommand;
+import frc.robot.commands.indexer.IndexOutCommand;
 import frc.robot.commands.intake.BasicIntakeCommand;
 import frc.robot.commands.intake.IntakeArmToggleCommand;
 import frc.robot.commands.intake.OuttakeCommand;
 import frc.robot.commands.shooter.BasicThrottleShootCommand;
-import frc.robot.commands.shooter.FullShootCommand;
-import frc.robot.commands.shooter.IndexCommand;
-import frc.robot.commands.shooter.IndexOutCommand;
+import frc.robot.commands.shooter.RunShooterCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.FiringAngle;
@@ -80,8 +80,8 @@ public class RobotContainer {
 
     // shooter button - need to adust throttle speeds
     basicShootButton.whileTrue(new BasicThrottleShootCommand(joystick::getThrottle));
-    lowShootButton.whileTrue(new FullShootCommand(joystick::getThrottle, FiringAngle.ANGLE_1));
-    highShootButton.whileTrue(new FullShootCommand(joystick::getThrottle, FiringAngle.ANGLE_2));
+    lowShootButton.whileTrue(new RunShooterCommand(joystick::getThrottle, FiringAngle.ANGLE_1));
+    highShootButton.whileTrue(new RunShooterCommand(joystick::getThrottle, FiringAngle.ANGLE_2));
 
     indexButton.whileTrue(new IndexCommand());
     indexOutButton.whileTrue(new IndexOutCommand());

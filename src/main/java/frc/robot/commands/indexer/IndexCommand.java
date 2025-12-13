@@ -1,13 +1,13 @@
-package frc.robot.commands.shooter;
+package frc.robot.commands.indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
-public class IndexOutCommand extends Command {
+public class IndexCommand extends Command {
+
   private final IndexerSubsystem indexer = IndexerSubsystem.getInstance();
 
-  public IndexOutCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public IndexCommand() {
   }
 
   // what runs ONCE @ the beginning
@@ -17,13 +17,13 @@ public class IndexOutCommand extends Command {
   // what runs REPEATEDLY when calling the command
   @Override
   public void execute() {
-    indexer.runFeederReverse();
+    indexer.runFeeder();
   }
 
   // what happens when the command ENDS
   @Override
   public void end(boolean interrupted) {
-    indexer.stopFeeder();
+    indexer.stopFeeder(); // mindful of other commands that may be running
   }
 
   // how the robot decides the Command is done

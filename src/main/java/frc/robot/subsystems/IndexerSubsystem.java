@@ -25,12 +25,12 @@ public class IndexerSubsystem extends SubsystemBase {
     }
 
   // two motors: preload and feeder
-  private static TalonSRX preloadIndexerMotor;
-  private static TalonSRX feederIndexerMotor;
+  private static TalonSRX preloadIndexerMotor; // green wheels
+  private static TalonSRX feederIndexerMotor; // tiny blue wheels
 
   // limit switches
-  private final DigitalInput preStagedCargoDetector = new DigitalInput(Constants.LimitSwitch.INDEXER_PRELOAD);
-  private final DigitalInput stagedCargoDetector = new DigitalInput(Constants.LimitSwitch.INDEXER_FEEDER);
+  private final DigitalInput preStagedBeamBreak = new DigitalInput(Constants.LimitSwitch.INDEXER_PRELOAD);
+  private final DigitalInput stagedBeamBreak = new DigitalInput(Constants.LimitSwitch.INDEXER_FEEDER);
 
   public IndexerSubsystem() {
     preloadIndexerMotor = new TalonSRX(MotorIDs.PRELOAD_INDEXER_MOTOR);
@@ -69,38 +69,33 @@ public class IndexerSubsystem extends SubsystemBase {
   }
 
   public void stopAll(){
-    feederIndexerMotor.set(ControlMode.PercentOutput, 0);
-    preloadIndexerMotor.set(ControlMode.PercentOutput, 0);
+    stopPreload();
+    stopFeeder();
   }
 
   // GETTERS
-  public double getLargeIndexerSpeed() {
-    double largeIndexerRunning = preloadIndexerMotor.getSelectedSensorVelocity();
-    return largeIndexerRunning;
+  public double getPreloadIndexerSpeed() {
+    return preloadIndexerMotor.getSelectedSensorVelocity();
   }
 
   public double getFeederIndexerSpeed() {
-    double feederIndexerRunning = feederIndexerMotor.getSelectedSensorVelocity();
-    return feederIndexerRunning;
+    return feederIndexerMotor.getSelectedSensorVelocity();
   }
 
-  // TODO: double check accuracy
   public boolean getCargoPreStagedDetected() {
     //returns true if beam is not broken, no ball
-    return !preStagedCargoDetector.get();
+    return !preStagedBeamBreak.get();
   }
 
   public boolean getCargoStagedDetected() {
     //returns true if beam is not broken, no ball
-    return !stagedCargoDetector.get();
+    return !stagedBeamBreak.get();
   }
 
   @Override
   public void periodic() { 
-    boolean stagedDetected = getCargoStagedDetected();
-    boolean preStagedDetected = getCargoPreStagedDetected();
 
-    SmartDashboard.putBoolean("Staged Cargo Detected", stagedDetected);
-    SmartDashboard.putBoolean("PreStaged Cargo Detected", preStagedDetected);
+    SmartDashboard.putBoolean("PreStaged Cargo Detected", getCargoPreStagedDetected());
+    SmartDashboard.putBoolean("Staged Cargo Detected", getCargoStagedDetected());
   }
 }

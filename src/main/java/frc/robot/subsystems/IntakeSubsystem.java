@@ -22,7 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private final DoubleSolenoid armSolenoid;
-    private final TalonSRX intakeMotor;
+    private final TalonSRX intakeMotor; // wheels on the arm
     private boolean isArmOut;
     private boolean intakeRunning;
 

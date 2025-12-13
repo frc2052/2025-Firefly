@@ -18,8 +18,6 @@ import frc.robot.Constants.MotorIDs;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  private static IntakeSubsystem intake1 = IntakeSubsystem.getInstance();
-
   private static ShooterSubsystem INSTANCE;
     public static ShooterSubsystem getInstance(){
         if (INSTANCE == null) {
@@ -62,10 +60,16 @@ public class ShooterSubsystem extends SubsystemBase {
       Constants.SolenoidIDs.SHOOTER_OUT
     );
 
-    currentAngle = angleSolenoid.get() == Value.kReverse ? FiringAngle.ANGLE_2 : FiringAngle.ANGLE_1;
+    if(angleSolenoid.get().equals(Value.kReverse)){
+      currentAngle = FiringAngle.ANGLE_1;
+    } else {
+      currentAngle = FiringAngle.ANGLE_2;
+    }
 
     stop();
   }
+
+  // wheels-related
 
   public void stop() {
     System.err.println("***************************** STOPPING SHOOTER");
@@ -74,30 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void shootAtPercentage(double topWheelPercent, double bottomWheelPercent) {
-    // System.err.println("***************************** RUN BY PERCENT SHOOTER");
-    // System.out.println("TOP PERCENT: " + topWheelPercent + "   BOTTOM PERCENT: " + bottomWheelPercent);
     topMotor.set(ControlMode.PercentOutput, topWheelPercent/100.0);
     bottomMotor.set(ControlMode.PercentOutput, bottomWheelPercent/100.0);
-  }
-
-  public void setShootAngle1() {
-      angleSolenoid.set(Value.kReverse);
-      currentAngle = FiringAngle.ANGLE_1;
-  }
-
-  public void setShootAngle2() {
-      angleSolenoid.set(Value.kForward);
-      currentAngle = FiringAngle.ANGLE_2;
-  }
-
-  // ------------ GETTERS ---------- //
-
-  public double getShootAngleDegrees() {
-    return currentAngle.getAngleDegrees();
-  }
-
-  public FiringAngle getShootAngleEnum() {
-    return currentAngle;
   }
 
   public double getTopWheelVelocity() {
@@ -108,13 +90,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return bottomMotor.getSelectedSensorVelocity();
   }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Shooter Top Wheel Speed", topMotor.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("Shooter Bottom Wheel Speed", bottomMotor.getSelectedSensorVelocity());
-  }
+  // solenoid related
 
-  public enum FiringAngle {
+
+  public enum FiringAngle { // remember to create a "Firing Angle"
     ANGLE_1(Constants.Shooter.FIRING_ANGLE_1_DEGREES),
     ANGLE_2(Constants.Shooter.FIRING_ANGLE_2_DEGREES);
 
@@ -127,5 +106,29 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getAngleDegrees() {
         return angleDegrees;
     }
+  }
+
+  public void setShootAngle1() {
+      angleSolenoid.set(Value.kReverse);
+      currentAngle = FiringAngle.ANGLE_1;
+  }
+
+  public void setShootAngle2() {
+      angleSolenoid.set(Value.kForward);
+      currentAngle = FiringAngle.ANGLE_2;
+  }
+
+  public double getShootAngleDegrees() {
+    return currentAngle.getAngleDegrees();
+  }
+
+  public FiringAngle getShootAngle() {
+    return currentAngle;
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Shooter Top Wheel Speed", topMotor.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Shooter Bottom Wheel Speed", bottomMotor.getSelectedSensorVelocity());
   }
 }

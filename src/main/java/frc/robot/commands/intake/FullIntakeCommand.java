@@ -12,8 +12,6 @@ public class FullIntakeCommand extends Command {
   private final IndexerSubsystem indexer = IndexerSubsystem.getInstance();
 
   public FullIntakeCommand() {
-    addRequirements(intake);
-    // hopper/indexer left off to allow shooting @ the same time
   }
 
   // what runs ONCE @ the beginning
@@ -33,7 +31,7 @@ public class FullIntakeCommand extends Command {
       indexer.runFeeder();
     }
     // case 2: ball staged, 2nd ball not detected - keep running
-    else if(indexer.getCargoPreStagedDetected() && !indexer.getCargoPreStagedDetected()){
+    else if(!indexer.getCargoPreStagedDetected()){
       intake.runIntake();
       hopper.run();
       indexer.stopFeeder();
